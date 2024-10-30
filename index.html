@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PHP and JS Query Example</title>
+  </head>
+  <body>
+    <!-- Input field to type a query -->
+    <input type="text" id="queryInput" placeholder="Enter query..." />
+    <button onclick="sendQuery()">Send Query</button>
+
+    <!-- Div to display the response -->
+    <div id="result"></div>
+
+    <script>
+      // JavaScript function to send query to PHP and handle response
+      function sendQuery() {
+        // Get the query from the input field
+        const query = document.getElementById("queryInput").value;
+        // const query = "SELECT * FROM `sjcemAI/ML`";
+
+        // Make a GET request to the PHP API with the query parameter
+        fetch(
+          `https://college-timetable.wuaze.com/api/query.php?query=${encodeURIComponent(
+            query
+          )}`
+        )
+          .then((response) => response.json()) // Parse the JSON response
+          .then((data) => {
+            // Display the data in the result div
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+
+            if (data.length > 0) {
+              // If data is returned, display it
+              data.forEach((row) => {
+                resultDiv.innerHTML += `<p>${JSON.stringify(row)}</p>`;
+              });
+            } else if (data.error) {
+              // If there is an error, display the error message
+              resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+            } else {
+              // If no data is found
+              resultDiv.innerHTML = "<p>No data found</p>";
+            }
+          })
+          .catch((error) => {
+            // Handle any errors
+            console.log("Error:", error);
+            document.getElementById("result").innerHTML =
+              "<p>There was an error processing your request</p>";
+          });
+      }
+    </script>
+  </body>
+</html>
